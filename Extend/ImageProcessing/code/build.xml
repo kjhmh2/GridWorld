@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<project name="java" default="compile" basedir=".">
+    <!-- 源代码路径 -->
+    <property name="src.path" value="src/java"/>
+    <!-- 编译文件路径 -->
+    <property name="build.path" value="build"/>
+    <!-- 测试代码路径 -->
+    <property name="test.path" value="src/test"/>
+    <!-- junit包路径 -->
+    <property name="lib.path" value="lib"/>
+    <!-- report路径 -->
+    <property name="report.path" value="report"/>
+    <!-- 保存图片路径-->
+    <property name="res.path" value="res"/>
+
+    <!-- 设置classpath -->
+    <path id="compile.path">
+        <fileset dir="${lib.path}">
+            <include name="**/*.jar"/>
+        </fileset>
+        <pathelement path="${build.path}"/>
+    </path>
+    
+    <!-- 编译测试文件，初始化build目录 -->
+    <target name="compile" depends="clean">
+        <mkdir dir="${build.path}"/>
+        <javac srcdir="${src.path}" destdir="${build.path}"  classpathref="compile.path" includeantruntime="on"/>
+        <javac srcdir="${test.path}" destdir="${build.path}"  classpathref="compile.path" includeantruntime="on"/>
+    </target>
+
+    <!-- 运行 -->
+    <target name="run" depends="compile">
+        <java classname="ImageReaderRunner" classpathref="compile.path" fork="yes"/>
+    </target>
+
+    <!-- 执行测试 -->
+    <target name="test" depends="compile">
+        <mkdir dir="${report.path}"/>
+        <mkdir dir="${res.path}"/>
+        <junit printsummary="true">
+            <formatter type="xml" usefile="true"/>
+              <classpath refid="compile.path"/>
+             <test name="ImageProcessingTest" todir="${report.path}"/>
+        </junit>
+        <junitreport todir="${report.path}">
+            <fileset dir="${report.path}" includes="TEST-*.xml">
+            </fileset>
+            <report format="frames" todir="${report.path}/html"/>
+        </junitreport>
+    </target>
+
+    <!-- 清除历史编译和报告 -->
+    <target name="clean">
+        <delete dir="${build.path}"/>
+        <delete dir="${report.path}"/>
+        <delete dir="${res.path}"/>
+    </target>
+
+</project>

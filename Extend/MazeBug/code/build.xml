@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<project name="java" default="compile" basedir=".">
+    <!-- 源代码路径 -->
+    <property name="src.path" value="src"/>
+    <!-- 编译文件路径 -->
+    <property name="build.path" value="build"/>
+    <!-- lib路径 -->
+    <property name="lib.path" value="lib"/>
+
+    <!-- 设置classpath -->
+    <path id="compile.path">
+        <fileset dir="${lib.path}">
+            <include name="**/*.jar"/>
+        </fileset>
+        <pathelement path="${build.path}"/>
+    </path>
+    
+    <!-- 编译文件，初始化build目录 -->
+    <target name="compile" depends="clean">
+        <mkdir dir="${build.path}"/>
+        <javac srcdir="${src.path}" destdir="${build.path}"  classpathref="compile.path" includeantruntime="on"/>
+    </target>
+
+    <!-- 运行 -->
+    <target name="run" depends="compile">
+        <java classname="MazeBugRunner" classpathref="compile.path" fork="yes"/>
+    </target>
+
+    <!-- 清除历史编译和报告 -->
+    <target name="clean">
+        <delete dir="${build.path}"/>
+        <delete dir="${report.path}"/>
+        <delete dir="${res.path}"/>
+    </target>
+
+</project>
